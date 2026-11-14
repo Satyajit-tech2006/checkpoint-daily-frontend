@@ -1,0 +1,96 @@
+---
+import type { FooterColumn } from '../../types';
+import PageContainer from './PageContainer.astro';
+import SocialLinks from '../navigation/SocialLinks.astro';
+
+interface Props {
+  columns?: FooterColumn[];
+}
+
+const defaultColumns: FooterColumn[] = [
+  {
+    title: 'Editorial',
+    links: [
+      { label: 'Latest News', href: '/news' },
+      { label: 'Deep Explainers', href: '/explainers' },
+      { label: 'Rumour Radar', href: '/rumour-radar' },
+      { label: 'Leonida Lore', href: '/characters' },
+    ],
+  },
+  {
+    title: 'Community Arena',
+    links: [
+      { label: 'Weekly Character Vote', href: '/vote' },
+      { label: 'Faction Teams', href: '/teams' },
+      { label: 'Global Leaderboard', href: '/leaderboard' },
+      { label: 'Member Profiles', href: '/profile' },
+    ],
+  },
+  {
+    title: 'Publication',
+    links: [
+      { label: 'About Checkpoint Daily', href: '/about' },
+      { label: 'Editorial & Fact Policy', href: '/editorial-policy' },
+      { label: 'Contact & Tips', href: '/contact' },
+      { label: 'Privacy & Terms', href: '/privacy' },
+    ],
+  },
+];
+
+const { columns = defaultColumns } = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-zinc-800/90 bg-zinc-950 text-zinc-400">
+  <PageContainer className="py-12 lg:py-16">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2 space-y-4">
+        <a href="/" class="inline-flex items-center gap-2.5">
+          <div class="flex h-8 w-8 items-center justify-center rounded-md border border-zinc-700 bg-zinc-900">
+            <span class="h-3 w-3 rotate-45 border-2 border-amber-500 bg-amber-500/20" />
+          </div>
+          <span class="font-display text-lg font-black uppercase tracking-tight text-white">
+            Checkpoint <span class="text-amber-500">Daily</span>
+          </span>
+        </a>
+
+        <p class="max-w-sm text-sm leading-relaxed text-zinc-400">
+          Independent gaming journalism, deep-dive world analysis, and community-driven faction battles covering Leonida and beyond.
+        </p>
+
+        <div class="pt-1">
+          <SocialLinks />
+        </div>
+      </div>
+
+      {columns.map((col) => (
+        <nav aria-label={col.title} class="space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-200">
+            {col.title}
+          </h3>
+          <ul class="space-y-2.5 text-sm">
+            {col.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="transition-colors hover:text-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))}
+    </div>
+
+    <div class="mt-12 border-t border-zinc-900 pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-500">
+      <p>
+        &copy; {currentYear} Checkpoint Daily Media. All rights reserved.
+      </p>
+      <p class="max-w-xl sm:text-right leading-relaxed">
+        Checkpoint Daily is an independent fan and editorial publication. Not affiliated with, endorsed, or sponsored by Rockstar Games or Take-Two Interactive.
+      </p>
+    </div>
+  </PageContainer>
+</footer>

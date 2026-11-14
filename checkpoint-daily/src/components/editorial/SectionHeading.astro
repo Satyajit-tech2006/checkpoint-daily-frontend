@@ -1,0 +1,57 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  subtitle?: string;
+  actionLabel?: string;
+  actionHref?: string;
+  accent?: 'editorial' | 'community';
+  className?: string;
+}
+
+const {
+  title,
+  eyebrow,
+  subtitle,
+  actionLabel,
+  actionHref,
+  accent = 'editorial',
+  className,
+} = Astro.props;
+---
+
+<div class={cn('flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between', className)}>
+  <div class="border-l-2 pl-4 border-amber-500" class:list={[{ 'border-cyan-400': accent === 'community' }]}>
+    {eyebrow && (
+      <p
+        class={cn(
+          'text-[11px] font-bold uppercase tracking-[0.18em]',
+          accent === 'community' ? 'text-cyan-400' : 'text-amber-400'
+        )}
+      >
+        {eyebrow}
+      </p>
+    )}
+    <h2 class="mt-0.5 font-display text-2xl font-black uppercase tracking-tight text-white sm:text-3xl">
+      {title}
+    </h2>
+    {subtitle && <p class="mt-1 max-w-2xl text-sm text-zinc-400">{subtitle}</p>}
+  </div>
+
+  {actionLabel && actionHref && (
+    <a
+      href={actionHref}
+      class={cn(
+        'inline-flex shrink-0 items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded',
+        accent === 'community'
+          ? 'text-cyan-400 hover:text-cyan-300'
+          : 'text-amber-400 hover:text-amber-300'
+      )}
+    >
+      <span>{actionLabel}</span>
+      <span aria-hidden="true">&rarr;</span>
+    </a>
+  )}
+</div>

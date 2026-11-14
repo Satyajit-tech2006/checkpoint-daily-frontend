@@ -1,0 +1,32 @@
+---
+import PageContainer from './PageContainer.astro';
+
+interface Props {
+  tag: string;
+  message: string;
+  href?: string;
+  linkText?: string;
+}
+
+const { tag, message, href, linkText = 'Read Dispatch' } = Astro.props;
+---
+
+<div class="border-b border-zinc-800/90 bg-zinc-950 text-xs text-zinc-300">
+  <PageContainer className="flex items-center justify-between py-2 gap-4">
+    <div class="flex items-center gap-2.5 truncate">
+      <span class="inline-flex shrink-0 items-center rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-400 border border-amber-500/20">
+        {tag}
+      </span>
+      <p class="truncate font-medium text-zinc-300">{message}</p>
+    </div>
+
+    {href && (
+      <a
+        href={href}
+        class="shrink-0 font-semibold text-amber-400 transition-colors hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+      >
+        {linkText} &rarr;
+      </a>
+    )}
+  </PageContainer>
+</div>

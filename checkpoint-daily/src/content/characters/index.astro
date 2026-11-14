@@ -1,0 +1,46 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PageContainer from '../../components/layout/PageContainer.astro';
+import Breadcrumbs from '../../components/navigation/Breadcrumbs.astro';
+import SectionHeading from '../../components/editorial/SectionHeading.astro';
+import CharacterCard from '../../components/community/CharacterCard.astro';
+import EmptyState from '../../components/ui/EmptyState';
+import { getAllCharacters, getGlobalSearchIndex } from '../../lib/editorial';
+
+const [characters, searchItems] = await Promise.all([
+  getAllCharacters(),
+  getGlobalSearchIndex(),
+]);
+---
+
+<MainLayout
+  title="Leonida Character Directory"
+  description="Complete intelligence dossiers, faction affiliations, and attributes for key figures across Vice City and Leonida."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-8">
+    <Breadcrumbs items={[{ label: 'Characters' }]} />
+
+    <SectionHeading
+      accent="community"
+      eyebrow="Leonida Intelligence Files"
+      title="Character Directory"
+      subtitle="Verified dossiers on Vice City syndicates, Port Gellhorn crews, and key figures competing in the Weekly Arena."
+      actionLabel="Explore Faction Teams"
+      actionHref="/teams"
+    />
+
+    {characters.length === 0 ? (
+      <EmptyState
+        title="No Dossiers Indexed"
+        description="Character profiles are currently being compiled by our editorial desk."
+      />
+    ) : (
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {characters.map((character) => (
+          <CharacterCard character={character} />
+        ))}
+      </div>
+    )}
+  </PageContainer>
+</MainLayout>

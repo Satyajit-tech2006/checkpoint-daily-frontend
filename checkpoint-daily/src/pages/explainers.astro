@@ -1,0 +1,53 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import CategoryNav from '../components/navigation/CategoryNav.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import ArticleGrid from '../components/editorial/ArticleGrid.astro';
+import { getAllArticles, getGlobalSearchIndex } from '../lib/editorial';
+import type { CategoryItem } from '../types';
+
+const [articles, searchItems] = await Promise.all([
+  getAllArticles(),
+  getGlobalSearchIndex(),
+]);
+
+const explainers = articles.filter((a) => a.categorySlug === 'explainers');
+
+const categories: CategoryItem[] = [
+  { label: 'All Dispatches', slug: 'all', href: '/news', count: articles.length },
+  { label: 'Deep Explainers', slug: 'explainers', href: '/explainers', count: explainers.length },
+  {
+    label: 'Rumour Radar',
+    slug: 'rumour-radar',
+    href: '/rumour-radar',
+    count: articles.filter((a) => a.categorySlug === 'rumour-radar').length,
+  },
+];
+---
+
+<MainLayout
+  title="Deep Explainers"
+  description="In-depth map cartography, gameplay system breakdowns, and lore guides for Leonida and Vice City."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-8">
+    <Breadcrumbs items={[{ label: 'Explainers' }]} />
+
+    <SectionHeading
+      eyebrow="Long-Form Analysis"
+      title="Deep Explainers"
+      subtitle="Frame-by-frame cartography, engine patent analysis, and structured guides to Leonida."
+    />
+
+    <CategoryNav categories={categories} activeSlug="explainers" />
+
+    <ArticleGrid
+      articles={explainers}
+      layout="grid-2"
+      emptyTitle="No Explainers Published Yet"
+      emptyDescription="Our analysts are compiling the next deep dive. Check back soon."
+    />
+  </PageContainer>
+</MainLayout>

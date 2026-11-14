@@ -1,0 +1,71 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import CategoryNav from '../components/navigation/CategoryNav.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import ArticleGrid from '../components/editorial/ArticleGrid.astro';
+import TrendingStories from '../components/editorial/TrendingStories.astro';
+import Newsletter from '../components/editorial/Newsletter';
+import { getAllArticles, getGlobalSearchIndex } from '../lib/editorial';
+import type { CategoryItem } from '../types';
+
+const [articles, searchItems] = await Promise.all([
+  getAllArticles(),
+  getGlobalSearchIndex(),
+]);
+
+const categories: CategoryItem[] = [
+  { label: 'All Dispatches', slug: 'all', href: '/news', count: articles.length },
+  {
+    label: 'Breaking News',
+    slug: 'news',
+    href: '/news',
+    count: articles.filter((a) => a.categorySlug === 'news').length,
+  },
+  {
+    label: 'Deep Explainers',
+    slug: 'explainers',
+    href: '/explainers',
+    count: articles.filter((a) => a.categorySlug === 'explainers').length,
+  },
+  {
+    label: 'Rumour Radar',
+    slug: 'rumour-radar',
+    href: '/rumour-radar',
+    count: articles.filter((a) => a.categorySlug === 'rumour-radar').length,
+  },
+];
+---
+
+<MainLayout
+  title="News & Dispatches"
+  description="Latest GTA VI news, Leonida world updates, and verified gaming journalism from Checkpoint Daily."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-8">
+    <Breadcrumbs items={[{ label: 'News' }]} />
+
+    <SectionHeading
+      eyebrow="Checkpoint Wire"
+      title="News & Dispatches"
+      subtitle="Chronological coverage of official announcements, technical breakdowns, and Leonida intelligence."
+    />
+
+    <CategoryNav categories={categories} activeSlug="all" />
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 pt-2">
+      <div class="lg:col-span-8">
+        <ArticleGrid articles={articles} layout="list" />
+      </div>
+
+      <div class="lg:col-span-4 space-y-6">
+        <TrendingStories articles={articles} title="Most Read" />
+      </div>
+    </div>
+
+    <div class="pt-6">
+      <Newsletter client:visible />
+    </div>
+  </PageContainer>
+</MainLayout>

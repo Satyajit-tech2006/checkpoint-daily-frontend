@@ -1,0 +1,97 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import FeaturedArticleCard from '../components/editorial/FeaturedArticleCard.astro';
+import TrendingStories from '../components/editorial/TrendingStories.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import ArticleGrid from '../components/editorial/ArticleGrid.astro';
+import VersusComponent from '../components/community/VersusComponent';
+import LeaderboardTable from '../components/community/LeaderboardTable.astro';
+import Newsletter from '../components/editorial/Newsletter';
+import {
+  getAllArticles,
+  getGlobalSearchIndex,
+  ACTIVE_WEEKLY_POLL,
+  LEADERBOARD_STANDINGS,
+} from '../lib/editorial';
+
+const [articles, searchItems] = await Promise.all([
+  getAllArticles(),
+  getGlobalSearchIndex(),
+]);
+
+const featuredArticle = articles.find((a) => a.featured) || articles[0];
+const remainingArticles = articles.filter((a) => a.slug !== featuredArticle?.slug);
+---
+
+<MainLayout title="Home" searchItems={searchItems}>
+  <!-- Hero Editorial Front Page -->
+  <section class="border-b border-zinc-900 py-8 lg:py-12">
+    <PageContainer>
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+          {featuredArticle && <FeaturedArticleCard article={featuredArticle} priority />}
+        </div>
+        <div class="lg:col-span-4">
+          <TrendingStories articles={articles} title="Wire Priority" />
+        </div>
+      </div>
+    </PageContainer>
+  </section>
+
+  <!-- Latest Dispatches & Rumour Radar -->
+  <section class="py-12 lg:py-16">
+    <PageContainer className="space-y-8">
+      <SectionHeading
+        eyebrow="Editorial Desk"
+        title="Latest Dispatches"
+        subtitle="Verified reports, map cartography, and fact-checked intelligence from across Leonida."
+        actionLabel="All News & Archives"
+        actionHref="/news"
+      />
+
+      <ArticleGrid articles={remainingArticles} layout="grid-3" />
+    </PageContainer>
+  </section>
+
+  <!-- Community Arena & Live Standings -->
+  <section class="border-y border-zinc-900 bg-zinc-950/60 py-12 lg:py-16">
+    <PageContainer className="space-y-12">
+      <div class="space-y-6">
+        <SectionHeading
+          accent="community"
+          eyebrow="Community Arena"
+          title="Weekly Character Clash"
+          subtitle="Cast your ballot to earn faction points and unlock live community telemetry."
+          actionLabel="Full Arena & History"
+          actionHref="/vote"
+        />
+
+        <VersusComponent
+          client:visible
+          poll={ACTIVE_WEEKLY_POLL}
+          isAuthenticated={false}
+        />
+      </div>
+
+      <div class="space-y-6">
+        <SectionHeading
+          accent="community"
+          eyebrow="Season 1 Telemetry"
+          title="Faction Standings"
+          actionLabel="Full Leaderboard"
+          actionHref="/leaderboard"
+        />
+
+        <LeaderboardTable entries={LEADERBOARD_STANDINGS} />
+      </div>
+    </PageContainer>
+  </section>
+
+  <!-- Editorial Newsletter -->
+  <section class="py-12 lg:py-16">
+    <PageContainer>
+      <Newsletter client:visible />
+    </PageContainer>
+  </section>
+</MainLayout>

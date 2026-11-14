@@ -1,0 +1,37 @@
+---
+import { formatEditorialDate, cn } from '../../lib/utils';
+
+interface Props {
+  publishedAt: string;
+  readingTime: string;
+  authorName?: string;
+  compact?: boolean;
+  className?: string;
+}
+
+const {
+  publishedAt,
+  readingTime,
+  authorName,
+  compact = false,
+  className,
+} = Astro.props;
+---
+
+<div
+  class={cn(
+    'flex flex-wrap items-center gap-x-2 gap-y-1 text-zinc-400',
+    compact ? 'text-[11px]' : 'text-xs',
+    className
+  )}
+>
+  {authorName && (
+    <>
+      <span class="font-semibold text-zinc-200">{authorName}</span>
+      <span aria-hidden="true" class="text-zinc-600">&bull;</span>
+    </>
+  )}
+  <time datetime={publishedAt}>{formatEditorialDate(publishedAt)}</time>
+  <span aria-hidden="true" class="text-zinc-600">&bull;</span>
+  <span>{readingTime}</span>
+</div>

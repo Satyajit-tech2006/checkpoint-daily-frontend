@@ -1,0 +1,56 @@
+---
+import type { NavItem } from '../../types';
+import { cn } from '../../lib/utils';
+
+interface Props {
+  items: NavItem[];
+  currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+
+const isActive = (href: string) => {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+};
+---
+
+<nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1">
+  {items.map((item) => {
+    const active = isActive(item.href);
+    return (
+      <a
+        href={item.href}
+        aria-current={active ? 'page' : undefined}
+        class={cn(
+          'relative flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500',
+          active
+            ? 'text-white bg-zinc-900'
+            : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/50'
+        )}
+      >
+        <span>{item.label}</span>
+        {item.badge && (
+          <span
+            class={cn(
+              'rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+              item.isCommunity
+                ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
+                : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+            )}
+          >
+            {item.badge}
+          </span>
+        )}
+        {active && (
+          <span
+            class={cn(
+              'absolute bottom-0 left-3 right-3 h-0.5 rounded-full',
+              item.isCommunity ? 'bg-cyan-400' : 'bg-amber-500'
+            )}
+          />
+        )}
+      </a>
+    );
+  })}
+</nav>

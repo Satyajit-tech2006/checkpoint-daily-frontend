@@ -1,0 +1,56 @@
+---
+import type { ArticleSummary } from '../../types';
+import TagBadge from './TagBadge.astro';
+import ArticleMetadata from './ArticleMetadata.astro';
+
+interface Props {
+  article: ArticleSummary;
+}
+
+const { article } = Astro.props;
+const articleHref = `/articles/${article.slug}`;
+---
+
+<article class="group relative flex flex-col sm:flex-row gap-4 sm:gap-5 rounded-xl border border-zinc-800/90 bg-[#121216] p-3.5 sm:p-4 transition-colors hover:border-zinc-700">
+  <!-- Media -->
+  <div class="relative aspect-video sm:aspect-[16/10] sm:w-56 md:w-64 shrink-0 overflow-hidden rounded-lg bg-zinc-900">
+    <img
+      src={article.coverImage}
+      alt={article.coverAlt}
+      loading="lazy"
+      class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+    />
+  </div>
+
+  <!-- Copy -->
+  <div class="flex flex-1 flex-col justify-between py-0.5 space-y-2.5 min-w-0">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <TagBadge label={article.category} variant="category" />
+        {article.rumourStatus && (
+          <TagBadge label={article.rumourStatus} variant={article.rumourStatus} />
+        )}
+      </div>
+
+      <h3 class="font-display text-lg sm:text-xl font-bold leading-snug text-zinc-100 transition-colors group-hover:text-amber-400">
+        <a
+          href={articleHref}
+          class="after:absolute after:inset-0 focus-visible:outline-none focus-visible:underline"
+        >
+          {article.title}
+        </a>
+      </h3>
+
+      <p class="line-clamp-2 text-sm leading-relaxed text-zinc-400">
+        {article.excerpt}
+      </p>
+    </div>
+
+    <ArticleMetadata
+      authorName={article.author.name}
+      publishedAt={article.publishedAt}
+      readingTime={article.readingTime}
+      compact
+    />
+  </div>
+</article>

@@ -1,0 +1,50 @@
+---
+import type { ArticleSummary } from '../../types';
+import { formatEditorialDate } from '../../lib/utils';
+
+interface Props {
+  articles: ArticleSummary[];
+  title?: string;
+}
+
+const { articles, title = 'Top Dispatches' } = Astro.props;
+const ranked = articles.slice(0, 5);
+---
+
+<aside aria-label={title} class="rounded-xl border border-zinc-800/90 bg-[#121216] p-5">
+  <div class="flex items-center justify-between border-b border-zinc-800 pb-3.5">
+    <h3 class="font-display text-sm font-black uppercase tracking-widest text-white">
+      {title}
+    </h3>
+    <span class="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+  </div>
+
+  <ol class="mt-4 divide-y divide-zinc-800/70">
+    {ranked.map((article, idx) => (
+      <li class="py-3.5 first:pt-0 last:pb-0">
+        <a
+          href={`/articles/${article.slug}`}
+          class="group flex items-start gap-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+        >
+          <span class="font-display text-xl font-black leading-none text-zinc-700 transition-colors group-hover:text-amber-500">
+            {String(idx + 1).padStart(2, '0')}
+          </span>
+          <div class="space-y-1 min-w-0">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-400">
+              {article.category}
+            </span>
+            <h4 class="font-display text-sm font-bold leading-snug text-zinc-200 transition-colors group-hover:text-white">
+              {article.title}
+            </h4>
+            <time
+              datetime={article.publishedAt}
+              class="block text-[11px] text-zinc-500"
+            >
+              {formatEditorialDate(article.publishedAt)}
+            </time>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ol>
+</aside>

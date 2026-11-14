@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import type { SearchableItem, UserSessionProfile } from '../types';
+import AnnouncementBar from '../components/layout/AnnouncementBar.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import BackToTop from '../components/navigation/BackToTop';
+import ToastContainer from '../components/ui/Toast';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  showAnnouncement?: boolean;
+  searchItems?: SearchableItem[];
+  user?: UserSessionProfile | null;
+}
+
+const {
+  title,
+  description = 'Independent gaming journalism, deep-dive GTA VI & Leonida explainers, Rumour Radar verification, and weekly community faction battles.',
+  ogImage = '/og-default.jpg',
+  showAnnouncement = true,
+  searchItems = [],
+  user = null,
+} = Astro.props;
+
+const formattedTitle = title === 'Home'
+  ? 'Checkpoint Daily — Gaming News, Leonida Lore & Community Arena'
+  : `${title} | Checkpoint Daily`;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{formattedTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Social Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={formattedTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="bg-[#09090b] text-zinc-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-amber-500 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-zinc-950"
+    >
+      Skip to main content
+    </a>
+
+    {showAnnouncement && (
+      <AnnouncementBar
+        tag="Arena Live"
+        message="Week 14 Character Clash is open — cast your vote for Vice City's top syndicate."
+        href="/vote"
+        linkText="Enter Arena"
+      />
+    )}
+
+    <Header searchItems={searchItems} user={user} />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <BackToTop client:idle />
+    <ToastContainer client:load />
+  </body>
+</html>

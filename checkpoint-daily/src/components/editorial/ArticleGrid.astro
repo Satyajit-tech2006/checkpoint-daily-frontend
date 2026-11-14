@@ -1,0 +1,43 @@
+---
+import type { ArticleSummary } from '../../types';
+import StandardArticleCard from './StandardArticleCard.astro';
+import HorizontalArticleCard from './HorizontalArticleCard.astro';
+import EmptyState from '../ui/EmptyState';
+import { cn } from '../../lib/utils';
+
+interface Props {
+  articles: ArticleSummary[];
+  layout?: 'grid-3' | 'grid-2' | 'list';
+  emptyTitle?: string;
+  emptyDescription?: string;
+  className?: string;
+}
+
+const {
+  articles,
+  layout = 'grid-3',
+  emptyTitle = 'No Dispatches Found',
+  emptyDescription = 'There are no published articles matching this filter yet. Check back soon for the next Leonida briefing.',
+  className,
+} = Astro.props;
+
+const gridClasses = {
+  'grid-3': 'grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3',
+  'grid-2': 'grid grid-cols-1 gap-6 md:grid-cols-2',
+  list: 'flex flex-col gap-4',
+};
+---
+
+{articles.length === 0 ? (
+  <EmptyState title={emptyTitle} description={emptyDescription} />
+) : (
+  <div class={cn(gridClasses[layout], className)}>
+    {articles.map((article) =>
+      layout === 'list' ? (
+        <HorizontalArticleCard article={article} />
+      ) : (
+        <StandardArticleCard article={article} />
+      )
+    )}
+  </div>
+)}

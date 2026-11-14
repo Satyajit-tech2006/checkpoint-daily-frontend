@@ -1,0 +1,53 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import SocialLinks from '../components/navigation/SocialLinks.astro';
+import { getGlobalSearchIndex } from '../lib/editorial';
+
+const searchItems = await getGlobalSearchIndex();
+---
+
+<MainLayout
+  title="About Checkpoint Daily"
+  description="Learn about Checkpoint Daily's independent gaming journalism mission, Rumour Radar standards, and community arena."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-10">
+    <Breadcrumbs items={[{ label: 'About' }]} />
+
+    <div class="max-w-3xl space-y-6">
+      <SectionHeading
+        eyebrow="Publication Manifesto"
+        title="About Checkpoint Daily"
+        subtitle="Built for players who want substantive world analysis, verified reporting, and competitive community rivalries without clickbait filler."
+      />
+
+      <div class="space-y-5 text-base leading-relaxed text-zinc-300">
+        <p>
+          <strong class="text-white">Checkpoint Daily</strong> is an independent gaming publication and community platform launched with an intensive focus on <strong class="text-white">Grand Theft Auto VI</strong> and the state of Leonida, engineered from day one to expand into major open-world releases.
+        </p>
+        <p>
+          Modern gaming coverage is too often split between breathless rumour aggregation and shallow listicles. Our editorial desk separates verified primary-source reporting from speculation through our <a href="/rumour-radar" class="font-semibold text-amber-400 hover:underline">Rumour Radar</a> verification framework, while our <a href="/vote" class="font-semibold text-cyan-400 hover:underline">Community Arena</a> gives readers a permanent stake in weekly character clashes.
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-zinc-800 bg-[#121216] p-6 space-y-3">
+        <h2 class="font-display text-lg font-black uppercase text-white">
+          Independence & Trademark Notice
+        </h2>
+        <p class="text-sm leading-relaxed text-zinc-400">
+          Checkpoint Daily is an independent media project. We are not affiliated with, endorsed by, or officially connected to Rockstar Games, Take-Two Interactive, or any game publisher. All game titles, character names, and trademarks belong to their respective owners.
+        </p>
+      </div>
+
+      <div class="pt-2 space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-400">
+          Official Channels
+        </h3>
+        <SocialLinks />
+      </div>
+    </div>
+  </PageContainer>
+</MainLayout>

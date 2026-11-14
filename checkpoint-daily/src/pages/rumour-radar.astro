@@ -1,0 +1,48 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import TagBadge from '../components/editorial/TagBadge.astro';
+import ArticleGrid from '../components/editorial/ArticleGrid.astro';
+import { getAllArticles, getGlobalSearchIndex } from '../lib/editorial';
+
+const [articles, searchItems] = await Promise.all([
+  getAllArticles(),
+  getGlobalSearchIndex(),
+]);
+
+const rumours = articles.filter((a) => a.rumourStatus !== undefined);
+---
+
+<MainLayout
+  title="Rumour Radar"
+  description="Every GTA VI leak, patent filing, and viral claim investigated and graded as Confirmed, Unverified, or Debunked."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-8">
+    <Breadcrumbs items={[{ label: 'Rumour Radar' }]} />
+
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        eyebrow="Verification Desk"
+        title="Rumour Radar"
+        subtitle="We track leaks, patents, and viral claims—grading every report against primary-source evidence."
+      />
+
+      <!-- Verification Legend -->
+      <div class="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+        <TagBadge label="Confirmed" variant="confirmed" size="md" />
+        <TagBadge label="Unverified" variant="unverified" size="md" />
+        <TagBadge label="Debunked" variant="debunked" size="md" />
+      </div>
+    </div>
+
+    <ArticleGrid
+      articles={rumours}
+      layout="list"
+      emptyTitle="Radar Clear"
+      emptyDescription="No active rumour investigations logged yet."
+    />
+  </PageContainer>
+</MainLayout>

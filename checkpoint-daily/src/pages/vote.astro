@@ -1,0 +1,73 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../../components/layout/PageContainer.astro';
+import Breadcrumbs from '../../components/navigation/Breadcrumbs.astro';
+import SectionHeading from '../../components/editorial/SectionHeading.astro';
+import VersusComponent from '../../components/community/VersusComponent';
+import WeeklyWinnerCard from '../../components/community/WeeklyWinnerCard.astro';
+import { ACTIVE_WEEKLY_POLL, getGlobalSearchIndex } from '../../lib/editorial';
+
+const searchItems = await getGlobalSearchIndex();
+
+const pastResults = [
+  {
+    weekNumber: 13,
+    winnerName: 'Lucia Caminos',
+    teamName: 'Team Lucia',
+    teamSlug: 'team-lucia',
+    characterImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80',
+    winPercentage: 54,
+    totalVotes: 11240,
+  },
+  {
+    weekNumber: 12,
+    winnerName: 'Jason Duval',
+    teamName: 'Team Jason',
+    teamSlug: 'team-jason',
+    characterImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80',
+    winPercentage: 52,
+    totalVotes: 10890,
+  },
+];
+---
+
+<MainLayout
+  title="Weekly Character Arena"
+  description="Cast your verified ballot in Checkpoint Daily's weekly character-versus-character battle and earn faction points."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-12">
+    <Breadcrumbs items={[{ label: 'Arena Vote' }]} />
+
+    <SectionHeading
+      accent="community"
+      eyebrow="Weekly Face-Off"
+      title="Community Voting Arena"
+      subtitle="One authenticated account, one ballot. Results lock every Sunday at 23:59 UTC and update the global faction leaderboard."
+      actionLabel="Choose Your Faction"
+      actionHref="/teams"
+    />
+
+    <!-- Live Interactive Matchup -->
+    <VersusComponent
+      client:load
+      poll={ACTIVE_WEEKLY_POLL}
+      isAuthenticated={false}
+    />
+
+    <!-- Past Matchup Archive -->
+    <section class="border-t border-zinc-900 pt-10 space-y-6">
+      <SectionHeading
+        eyebrow="Arena Archive"
+        title="Previous Weekly Champions"
+        subtitle="Verified results from recent Leonida character battles."
+      />
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {pastResults.map((result) => (
+          <WeeklyWinnerCard {...result} />
+        ))}
+      </div>
+    </section>
+  </PageContainer>
+</MainLayout>

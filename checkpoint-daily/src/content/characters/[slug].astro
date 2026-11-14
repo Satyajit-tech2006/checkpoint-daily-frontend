@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '../../layouts/MainLayout.astro';
+import PageContainer from '../../components/layout/PageContainer.astro';
+import Breadcrumbs from '../../components/navigation/Breadcrumbs.astro';
+import CharacterProfileHeader from '../../components/community/CharacterProfileHeader.astro';
+import SectionHeading from '../../components/editorial/SectionHeading.astro';
+import ArticleGrid from '../../components/editorial/ArticleGrid.astro';
+import { getAllArticles, getGlobalSearchIndex } from '../../lib/editorial';
+import type { CharacterProfile } from '../../types';
+
+export async function getStaticPaths() {
+  const characters = await getCollection('characters');
+  return characters.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const character: CharacterProfile = {
+  id: entry.slug,
+  slug: entry.slug,
+  ...entry.data,
+};
+
+const [articles, searchItems] = await Promise.all([
+  getAllArticles(),
+  getGlobalSearchIndex(),
+]);
+
+const relatedCoverage = articles.slice(0, 3);
+const teamHref = entry.data.teamSlug ? `/teams/${entry.data.teamSlug}` : '/teams';
+---
+
+<MainLayout
+  title={`${character.name} — Character Dossier`}
+  description={character.bio}
+  ogImage={character.portraitImage}
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-10">
+    <Breadcrumbs
+      items={[
+        { label: 'Characters', href: '/characters' },
+        { label: character.name },
+      ]}
+    />
+
+    <!-- Cinematic Dossier Header -->
+    <CharacterProfileHeader character={character} teamHref={teamHref} />
+
+    <!-- Extended Dossier Lore (MDX) -->
+    <section class="max-w-3xl space-y-6">
+      <div
+        class="space-y-5 text-base leading-relaxed text-zinc-300
+               [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:font-black [&_h2]:uppercase [&_h2]:tracking-tight [&_h2]:text-white
+               [&_strong]:font-bold [&_strong]:text-white
+               [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2"
+      >
+        <Content />
+      </div>
+    </section>
+
+    <!-- Related Editorial Coverage -->
+    <section class="border-t border-zinc-900 pt-10 space-y-6">
+      <SectionHeading
+        eyebrow="Editorial Coverage"
+        title={`Latest Reports Featuring ${character.name}`}
+        actionLabel="All Dispatches"
+        actionHref="/news"
+      />
+      <ArticleGrid articles={relatedCoverage} layout="grid-3" />
+    </section>
+  </PageContainer>
+</MainLayout>

@@ -1,0 +1,20 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import ProfileDashboard from '../components/community/ProfileDashboard';
+import { getGlobalSearchIndex } from '../lib/editorial';
+
+const searchItems = await getGlobalSearchIndex();
+---
+
+<MainLayout
+  title="Operative Profile"
+  description="Manage your Checkpoint Daily faction allegiance and view your verified weekly voting history."
+  searchItems={searchItems}
+>
+  <PageContainer className="py-8 lg:py-12 space-y-8">
+    <Breadcrumbs items={[{ label: 'Profile' }]} />
+    <ProfileDashboard client:load initialUser={null} />
+  </PageContainer>
+</MainLayout>

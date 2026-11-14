@@ -1,0 +1,61 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+  label: string;
+  href?: string;
+  variant?: 'default' | 'category' | 'confirmed' | 'unverified' | 'debunked';
+  size?: 'sm' | 'md';
+  className?: string;
+}
+
+const {
+  label,
+  href,
+  variant = 'default',
+  size = 'sm',
+  className,
+} = Astro.props;
+
+const variantStyles = {
+  default: 'border-zinc-700/80 bg-zinc-900/90 text-zinc-300 hover:border-zinc-600 hover:text-white',
+  category: 'border-amber-500/30 bg-amber-500/15 text-amber-400 hover:bg-amber-500/25',
+  confirmed: 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300',
+  unverified: 'border-amber-500/40 bg-amber-500/15 text-amber-300',
+  debunked: 'border-red-500/40 bg-red-500/15 text-red-300',
+};
+
+const dotColors = {
+  confirmed: 'bg-emerald-400',
+  unverified: 'bg-amber-400',
+  debunked: 'bg-red-400',
+};
+
+const sizeStyles = {
+  sm: 'px-2 py-0.5 text-[10px]',
+  md: 'px-2.5 py-1 text-xs',
+};
+
+const isRumour = variant === 'confirmed' || variant === 'unverified' || variant === 'debunked';
+const classes = cn(
+  'inline-flex items-center gap-1.5 rounded font-bold uppercase tracking-wider border transition-colors',
+  variantStyles[variant],
+  sizeStyles[size],
+  className
+);
+---
+
+{href ? (
+  <a
+    href={href}
+    class={cn(classes, 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500')}
+  >
+    {isRumour && <span class={cn('h-1.5 w-1.5 rounded-full', dotColors[variant])} aria-hidden="true" />}
+    <span>{label}</span>
+  </a>
+) : (
+  <span class={classes}>
+    {isRumour && <span class={cn('h-1.5 w-1.5 rounded-full', dotColors[variant])} aria-hidden="true" />}
+    <span>{label}</span>
+  </span>
+)}
