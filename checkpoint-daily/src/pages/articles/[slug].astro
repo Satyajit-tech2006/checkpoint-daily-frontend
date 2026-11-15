@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import MainLayout from '../../layouts/MainLayout.astro';
 import PageContainer from '../../components/layout/PageContainer.astro';
 import Breadcrumbs from '../../components/navigation/Breadcrumbs.astro';
@@ -14,13 +14,13 @@ import { getAllArticles, getGlobalSearchIndex } from '../../lib/editorial';
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
   return articles.map((entry) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 const data = entry.data;
 
 const [allArticles, searchItems] = await Promise.all([
@@ -29,7 +29,7 @@ const [allArticles, searchItems] = await Promise.all([
 ]);
 
 const relatedArticles = allArticles
-  .filter((a) => a.slug !== entry.slug)
+  .filter((a) => a.slug !== entry.id)
   .slice(0, 3);
 
 const rumourDescriptions = {
@@ -54,7 +54,6 @@ const rumourDescriptions = {
         ]}
       />
 
-      <!-- Article Header -->
       <header class="max-w-4xl space-y-5">
         <div class="flex flex-wrap items-center gap-2.5">
           <TagBadge
@@ -90,7 +89,6 @@ const rumourDescriptions = {
         </div>
       </header>
 
-      <!-- Hero Cover Media -->
       <figure class="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
         <img
           src={data.coverImage}
@@ -102,9 +100,7 @@ const rumourDescriptions = {
         </figcaption>
       </figure>
 
-      <!-- Main 12-Column Editorial Layout -->
       <div class="grid grid-cols-1 gap-10 lg:grid-cols-12 pt-2">
-        <!-- Body Copy (8 cols) -->
         <div class="lg:col-span-8 space-y-8">
           {data.rumourStatus && (
             <div class="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -123,7 +119,6 @@ const rumourDescriptions = {
             </div>
           )}
 
-          <!-- Styled MDX Prose -->
           <div
             class="space-y-6 text-base sm:text-[17px] leading-[1.8] text-zinc-300
                    [&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:font-black [&_h2]:uppercase [&_h2]:tracking-tight [&_h2]:text-white
@@ -136,7 +131,6 @@ const rumourDescriptions = {
             <Content />
           </div>
 
-          <!-- Topic Tags -->
           {data.tags.length > 0 && (
             <div class="border-t border-zinc-800 pt-6 flex flex-wrap items-center gap-2">
               <span class="text-xs font-bold uppercase tracking-wider text-zinc-500 mr-1">
@@ -148,11 +142,9 @@ const rumourDescriptions = {
             </div>
           )}
 
-          <!-- Full Journalist Bio Box -->
           <AuthorInfo author={data.author} variant="bio-box" />
         </div>
 
-        <!-- Sticky Wire Sidebar (4 cols) -->
         <div class="lg:col-span-4 space-y-6">
           <div class="lg:sticky lg:top-24 space-y-6">
             <TrendingStories articles={allArticles} title="Latest Wire" />
@@ -162,7 +154,6 @@ const rumourDescriptions = {
     </PageContainer>
   </article>
 
-  <!-- Related Coverage -->
   {relatedArticles.length > 0 && (
     <section class="border-t border-zinc-900 bg-zinc-950/60 py-12 lg:py-16">
       <PageContainer className="space-y-8">

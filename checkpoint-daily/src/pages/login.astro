@@ -1,7 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import PageContainer from '../components/layout/PageContainer.astro';
-import AuthForm from '../components/community/AuthForm';
+import LiveAuthBridge from '../components/community/LiveAuthBridge';
 import { getGlobalSearchIndex } from '../lib/editorial';
 
 const searchItems = await getGlobalSearchIndex();
@@ -14,6 +14,6 @@ const searchItems = await getGlobalSearchIndex();
   searchItems={searchItems}
 >
   <PageContainer className="py-12 lg:py-20">
-    <AuthForm client:load mode="login" />
+    <LiveAuthBridge client:load mode="login" />
   </PageContainer>
 </MainLayout>

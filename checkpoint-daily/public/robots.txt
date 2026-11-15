@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://checkpointdaily.com/sitemap-index.xml

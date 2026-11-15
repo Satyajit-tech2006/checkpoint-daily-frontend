@@ -1,16 +1,15 @@
 ---
-import type { NavItem, SearchableItem, UserSessionProfile } from '../../types';
+import type { NavItem, SearchableItem } from '../../types';
 import PageContainer from './PageContainer.astro';
 import DesktopNav from './DesktopNav.astro';
 import MobileNav from './MobileNav';
 import SearchComponent from '../navigation/SearchComponent';
-import UserAvatarMenu from '../community/UserAvatarMenu';
+import LiveHeaderAuth from '../community/LiveHeaderAuth';
 
 interface Props {
   navItems?: NavItem[];
   currentPath?: string;
   searchItems?: SearchableItem[];
-  user?: UserSessionProfile | null;
 }
 
 const defaultNavItems: NavItem[] = [
@@ -27,13 +26,11 @@ const {
   navItems = defaultNavItems,
   currentPath = Astro.url.pathname,
   searchItems = [],
-  user = null,
 } = Astro.props;
 ---
 
 <header class="sticky top-0 z-40 w-full border-b border-zinc-800/90 bg-zinc-950/90 backdrop-blur-md">
   <PageContainer className="flex h-16 items-center justify-between gap-4">
-    <!-- Original Brand Identity -->
     <a
       href="/"
       class="group flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md"
@@ -52,13 +49,11 @@ const {
       </div>
     </a>
 
-    <!-- Desktop Navigation -->
     <DesktopNav items={navItems} currentPath={currentPath} />
 
-    <!-- Right Utility & Community Controls -->
     <div class="flex items-center gap-2.5">
       <SearchComponent client:load items={searchItems} />
-      <UserAvatarMenu client:load user={user} />
+      <LiveHeaderAuth client:load />
       <MobileNav client:load items={navItems} currentPath={currentPath} />
     </div>
   </PageContainer>

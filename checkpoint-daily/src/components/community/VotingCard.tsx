@@ -44,7 +44,7 @@ export default function VotingCard({
         />
         <div
           aria-hidden="true"
-          class="absolute inset-0 bg-gradient-to-t from-[#121216] via-[#121216]/30 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-[#121216] via-[#121216]/30 to-transparent"
         />
 
         {isSelected && (

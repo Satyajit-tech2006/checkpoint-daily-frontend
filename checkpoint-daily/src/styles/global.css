@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -32,13 +30,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Editorial display typography utility */
   .font-display {
     letter-spacing: -0.025em;
   }
 }
 
-/* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }

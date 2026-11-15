@@ -1,11 +1,11 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import PageContainer from '../../components/layout/PageContainer.astro';
-import Breadcrumbs from '../../components/navigation/Breadcrumbs.astro';
-import SectionHeading from '../../components/editorial/SectionHeading.astro';
-import VersusComponent from '../../components/community/VersusComponent';
-import WeeklyWinnerCard from '../../components/community/WeeklyWinnerCard.astro';
-import { ACTIVE_WEEKLY_POLL, getGlobalSearchIndex } from '../../lib/editorial';
+import PageContainer from '../components/layout/PageContainer.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import SectionHeading from '../components/editorial/SectionHeading.astro';
+import LiveArenaBridge from '../components/community/LiveArenaBridge';
+import WeeklyWinnerCard from '../components/community/WeeklyWinnerCard.astro';
+import { ACTIVE_WEEKLY_POLL, getGlobalSearchIndex } from '../lib/editorial';
 
 const searchItems = await getGlobalSearchIndex();
 
@@ -48,12 +48,8 @@ const pastResults = [
       actionHref="/teams"
     />
 
-    <!-- Live Interactive Matchup -->
-    <VersusComponent
-      client:load
-      poll={ACTIVE_WEEKLY_POLL}
-      isAuthenticated={false}
-    />
+    <!-- Live Interactive Matchup Connected to Supabase -->
+    <LiveArenaBridge client:load fallbackPoll={ACTIVE_WEEKLY_POLL} />
 
     <!-- Past Matchup Archive -->
     <section class="border-t border-zinc-900 pt-10 space-y-6">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { showToast } from '../ui/Toast';
@@ -18,6 +18,7 @@ export default function AuthForm({ mode, onSubmitAuth }: AuthFormProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,41 +42,38 @@ export default function AuthForm({ mode, onSubmitAuth }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!validate()) return;
 
     setIsLoading(true);
     try {
-      if (onSubmitAuth) {
-        await onSubmitAuth({
-          mode,
-          email: email.trim(),
-          password,
-          username: mode === 'register' ? username.trim() : undefined,
-        });
-      } else {
-        // Temporary simulation until Phase 3 wires Supabase Auth
-        await new Promise((r) => setTimeout(r, 600));
+      if (!onSubmitAuth) {
+        throw new Error('Auth handler not connected. Use LiveAuthBridge.');
       }
+
+      await onSubmitAuth({
+        mode,
+        email: email.trim(),
+        password,
+        username: mode === 'register' ? username.trim() : undefined,
+      });
 
       showToast({
         type: 'success',
         title: mode === 'login' ? 'Welcome Back, Operative' : 'Account Created',
-        description:
-          mode === 'login'
-            ? 'Session verified. Redirecting to the Arena...'
-            : 'Check your inbox or proceed to choose your faction.',
+        description: 'Session verified. Redirecting...',
       });
 
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get('redirect') || '/profile';
-      setTimeout(() => {
-        window.location.href = redirectTo;
-      }, 650);
+      window.location.href = redirectTo;
     } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Authentication failed.';
+      setFormError(msg);
       showToast({
         type: 'error',
         title: 'Authentication Failed',
-        description: err instanceof Error ? err.message : 'Invalid credentials or network error.',
+        description: msg,
       });
     } finally {
       setIsLoading(false);
@@ -98,6 +96,16 @@ export default function AuthForm({ mode, onSubmitAuth }: AuthFormProps) {
             : 'Register once to pledge permanent allegiance to a Leonida faction and vote weekly.'}
         </p>
       </div>
+
+      {formError && (
+        <div
+          role="alert"
+          className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-300"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+          <span>{formError}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {mode === 'register' && (

@@ -1,0 +1,111 @@
+---
+import type { LeaderboardEntry } from '../../types';
+import { cn } from '../../lib/utils';
+
+interface Props {
+  entries: LeaderboardEntry[];
+  highlightTeamId?: string | null;
+}
+
+const { entries, highlightTeamId = null } = Astro.props;
+---
+
+<div class="overflow-hidden rounded-xl border border-zinc-800/90 bg-[#121216]">
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-left text-sm">
+      <thead>
+        <tr class="border-b border-zinc-800 bg-zinc-950/80 text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+          <th scope="col" class="py-3.5 pl-5 pr-3 w-16">Rank</th>
+          <th scope="col" class="px-4 py-3.5">Faction Team</th>
+          <th scope="col" class="px-4 py-3.5 text-right hidden sm:table-cell">Members</th>
+          <th scope="col" class="px-4 py-3.5 text-right hidden md:table-cell">Weekly Wins</th>
+          <th scope="col" class="px-4 py-3.5 text-right">Weekly Pts</th>
+          <th scope="col" class="py-3.5 pl-4 pr-5 text-right">Total Score</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-zinc-800/70">
+        {entries.map((entry) => {
+          const isUserTeam = highlightTeamId === entry.teamId;
+          const isTop3 = entry.rank <= 3;
+
+          return (
+            <tr
+              class={cn(
+                'transition-colors hover:bg-zinc-900/60',
+                isUserTeam && 'bg-cyan-500/5'
+              )}
+            >
+              <!-- Rank -->
+              <td class="py-4 pl-5 pr-3 font-display font-black">
+                <div class="flex items-center gap-2">
+                  <span
+                    class={cn(
+                      'inline-flex h-7 w-7 items-center justify-center rounded-md text-xs',
+                      entry.rank === 1 && 'bg-amber-500 text-zinc-950',
+                      entry.rank === 2 && 'bg-zinc-300 text-zinc-950',
+                      entry.rank === 3 && 'bg-amber-700/80 text-white',
+                      !isTop3 && 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+                    )}
+                  >
+                    {entry.rank}
+                  </span>
+                  {entry.trend === 'up' && (
+                    <span class="text-xs text-emerald-400" title="Rank up">&uarr;</span>
+                  )}
+                  {entry.trend === 'down' && (
+                    <span class="text-xs text-red-400" title="Rank down">&darr;</span>
+                  )}
+                </div>
+              </td>
+
+              <!-- Team & Mascot -->
+              <td class="px-4 py-4">
+                <a href={`/teams/${entry.teamSlug}`} class="group flex items-center gap-3">
+                  <img
+                    src={entry.characterImage}
+                    alt={entry.characterName}
+                    loading="lazy"
+                    class="h-10 w-10 shrink-0 rounded-lg border border-zinc-700 object-cover object-top"
+                  />
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-display font-bold text-white group-hover:text-cyan-400 transition-colors truncate">
+                        {entry.teamName}
+                      </span>
+                      {isUserTeam && (
+                        <span class="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-cyan-300">
+                          You
+                        </span>
+                      )}
+                    </div>
+                    <span class="block text-xs text-zinc-500">{entry.characterName}</span>
+                  </div>
+                </a>
+              </td>
+
+              <!-- Members -->
+              <td class="px-4 py-4 text-right font-mono text-xs text-zinc-300 hidden sm:table-cell">
+                {entry.memberCount.toLocaleString()}
+              </td>
+
+              <!-- Weekly Wins -->
+              <td class="px-4 py-4 text-right font-mono text-xs text-amber-400 hidden md:table-cell">
+                {entry.weeklyWins}
+              </td>
+
+              <!-- Weekly Points -->
+              <td class="px-4 py-4 text-right font-mono text-xs font-semibold text-zinc-300">
+                +{entry.weeklyPoints.toLocaleString()}
+              </td>
+
+              <!-- Total Score -->
+              <td class="py-4 pl-4 pr-5 text-right font-display text-base font-black text-cyan-400">
+                {entry.totalPoints.toLocaleString()}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>

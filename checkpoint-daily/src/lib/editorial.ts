@@ -12,7 +12,7 @@ export async function getAllArticles(): Promise<ArticleSummary[]> {
   const entries = await getCollection('articles');
   return entries
     .map((entry) => ({
-      slug: entry.slug,
+      slug: entry.id,
       ...entry.data,
     }))
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
@@ -21,8 +21,8 @@ export async function getAllArticles(): Promise<ArticleSummary[]> {
 export async function getAllCharacters(): Promise<CharacterProfile[]> {
   const entries = await getCollection('characters');
   return entries.map((entry) => ({
-    id: entry.slug,
-    slug: entry.slug,
+    id: entry.id,
+    slug: entry.id,
     ...entry.data,
   }));
 }
